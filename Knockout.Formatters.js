@@ -1,51 +1,35 @@
 ﻿/// <reference path="knockout-3.2.0.js" />
 /// <reference path="jquery-2.1.1.min.js" />
 
-ko.bindingHandlers.Format = {
+ko.bindingHandlers.formattedInput = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var value = valueAccessor();
-        var valueUnwrapped = ko.unwrap(value) || {datatype:'text'};
-        var datatype = valueUnwrapped.datatype.toLowerCase();
-        var targetvalue = allBindings().value();
-        var strvalue = targetvalue.toString();
+        var options = valueAccessor();
+        
 
-        switch (datatype) {
-            case 'decimal':
-                var temp = "";
-                var counter = 0;
-                var dotfound = false;
-                for (var i = 0, j = strvalue.length ; i < j; i++) {
-                    if (strvalue[i] != '.') {
-                        temp += strvalue[i];
-                        counter++;
-                        if (counter == 3) {
-                            temp += ",";
-                            counter = 0;
+        switch (options.type) {
+            case "number":
+                ko.utils.registerEventHandler(element, "keypress", function (event) {
+                    var keynum;
+
+                    if (window.event) {
+                        keynum = event.keyCode;
+                    } else
+                        if (event.which) {
+                            keynum = event.which;
                         }
-                        else {
-                            if (dotfound == true) {
-                                if (counter == 2)
-                                    break;
-                            }
-                           
-                                
-                        }
-                    }
-                    else
-                    {
-                        console.log("Found");
-                        temp += strvalue[i];
-                        dotfound = true;
-                        counter = 0;
-                    }
-
-                }
-
-                $(element).val(temp);
+                    var charatercode = String.fromCharCode(keynum)
+                    var re5digit = /^\d*$/
+                    if (charatercode.search(re5digit) == -1)
+                        event.preventDefault();
+                });
                 break;
             default:
 
         }
+
+      
+      
+
     },
     update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var value = valueAccessor();
